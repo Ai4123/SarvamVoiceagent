@@ -231,21 +231,30 @@
             isSpeaking: false,
             audioQueue: [],
             recognition: null,
-            audioCtx: null
+            audioCtx: null,
+            analyser: null,
+            micStream: null,
+            interruptThreshold: 45, // Increased back to prevent noise sensitivity
+            aiStartTime: 0,
+            allowBargeInAfter: 1200, // Balanced grace period
+            volumeLevel: 0
         };
 
         const DOM = {
             container: document.getElementById('main-container'),
             status: document.getElementById('status'),
             subtitle: document.getElementById('subtitle-text'),
-            transcription: document.getElementById('transcription'),
             startBtn: document.getElementById('btn-start'),
             endBtn: document.getElementById('btn-end')
         };
 
         // --- Audio Context & Dial Tone ---
         function getAudioCtx() {
-            if (!STATE.audioCtx) STATE.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (!STATE.audioCtx) {
+                STATE.audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+                    latencyHint: 'interactive'
+                });
+            }
             if (STATE.audioCtx.state === 'suspended') STATE.audioCtx.resume();
             return STATE.audioCtx;
         }
@@ -273,50 +282,139 @@
             clearInterval(dialInterval);
         }
 
-        // --- Interruption Logic ---
+        // --- Interruption Logic (Barge-In) ---
+        function handleUserInterrupt() {
+            const now = Date.now();
+            if (STATE.isSpeaking && (now - STATE.aiStartTime > STATE.allowBargeInAfter)) {
+                console.log("Barge-in detected!");
+                interruptAI();
+            }
+        }
+
         function interruptAI() {
-            if (STATE.isSpeaking) {
-                console.log("Interruption detected! Killing AI voice.");
-                STATE.audioQueue.forEach(a => { a.pause(); a.src = ""; });
+            if (STATE.isSpeaking || STATE.audioQueue.length > 0) {
+                STATE.audioQueue.forEach(a => {
+                    try { a.pause(); a.src = ""; } catch (e) { }
+                });
                 STATE.audioQueue = [];
                 STATE.isSpeaking = false;
                 DOM.subtitle.textContent = "Listening...";
+                DOM.status.textContent = "Connected";
+            }
+        }
+
+        // --- Speech Detection (Volume Analysis) ---
+        function detectSpeech() {
+            if (!STATE.isActive || !STATE.analyser) return;
+
+            const dataArray = new Uint8Array(STATE.analyser.frequencyBinCount);
+            STATE.analyser.getByteFrequencyData(dataArray);
+
+            const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+            STATE.volumeLevel = volume;
+
+            // Visual feedback - less sensitive to avoid phantom flashing
+            if (volume > 15) {
+                DOM.status.style.color = (volume > STATE.interruptThreshold) ? "#ff5252" : "#00e676";
+                DOM.status.style.opacity = 1;
+            } else {
+                DOM.status.style.color = "white";
+                DOM.status.style.opacity = 0.8;
+            }
+
+            // Only barge-in if AI is speaking and volume crosses threshold
+            if (volume > STATE.interruptThreshold && STATE.isSpeaking) {
+                handleUserInterrupt();
+            }
+
+            if (STATE.isActive) {
+                requestAnimationFrame(detectSpeech);
             }
         }
 
         // --- Speech Recognition ---
-        function startListening() {
-            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-            STATE.recognition = new SpeechRec();
-            STATE.recognition.continuous = true;
-            STATE.recognition.interimResults = true;
-            STATE.recognition.lang = 'en-IN';
-
-            STATE.recognition.onresult = (event) => {
-                const result = event.results[event.results.length - 1];
-                const text = result[0].transcript;
-                DOM.transcription.textContent = text;
-
-                // If user speaks while AI is talking -> interrupt
-                if (STATE.isSpeaking && text.length > 3) {
-                    interruptAI();
+        async function startListening() {
+            try {
+                // IMPORTANT: Start Recognition BEFORE getUserMedia to avoid hardware lock/conflict
+                const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRec) {
+                    DOM.status.textContent = "Browser Not Supported";
+                    return;
                 }
 
-                if (result.isFinal) {
-                    sendToAI(text);
-                }
-            };
+                STATE.recognition = new SpeechRec();
+                STATE.recognition.continuous = true;
+                STATE.recognition.interimResults = true;
+                STATE.recognition.lang = 'en-IN';
 
-            STATE.recognition.onend = () => {
-                if (STATE.isActive) STATE.recognition.start();
-            };
+                STATE.recognition.onstart = async () => {
+                    console.log("STT Active");
+                    DOM.status.textContent = "Connected";
 
-            STATE.recognition.start();
+                    // Now that Recognition has fixed the hardware channel, start the Analyser
+                    try {
+                        const micStream = await navigator.mediaDevices.getUserMedia({
+                            audio: { echoCancellation: true, autoGainControl: true }
+                        });
+                        STATE.micStream = micStream;
+                        const ctx = getAudioCtx();
+                        const source = ctx.createMediaStreamSource(micStream);
+                        STATE.analyser = ctx.createAnalyser();
+                        STATE.analyser.fftSize = 256;
+                        source.connect(STATE.analyser);
+                        detectSpeech();
+                    } catch (e) {
+                        console.warn("Analyser blocked, but STT should still work.");
+                    }
+                };
+
+                STATE.recognition.onerror = (e) => {
+                    console.error("STT Error:", e.error);
+                    if (e.error === 'network') DOM.status.textContent = "Network Error";
+                    if (e.error === 'not-allowed') DOM.status.textContent = "Mic Denied";
+
+                    if (STATE.isActive && e.error !== 'not-allowed') {
+                        setTimeout(() => { if (STATE.isActive) try { STATE.recognition.start(); } catch (err) { } }, 1000);
+                    }
+                };
+
+                STATE.recognition.onresult = (event) => {
+                    const result = event.results[event.results.length - 1];
+                    const text = result[0].transcript;
+
+                    // Show transcription in the MAIN label for the user
+                    if (text.trim().length > 0) {
+                        DOM.subtitle.textContent = text;
+                        DOM.subtitle.style.color = "white";
+                    }
+
+                    // If AI is talking -> interrupt if user spoke more than a tiny bit
+                    if (STATE.isSpeaking && text.length > 5) {
+                        interruptAI();
+                    }
+
+                    if (result.isFinal && text.trim().length > 1) {
+                        sendToAI(text);
+                    }
+                };
+
+                STATE.recognition.onend = () => {
+                    if (STATE.isActive) {
+                        try { STATE.recognition.start(); } catch (e) { }
+                    }
+                };
+
+                STATE.recognition.start();
+
+            } catch (err) {
+                console.error("Audio Start Failure:", err);
+                DOM.status.textContent = "System Error";
+            }
         }
 
         async function sendToAI(text) {
             if (!STATE.isActive) return;
-            DOM.status.textContent = "Processing...";
+            DOM.status.textContent = "Thinking...";
             try {
                 const res = await fetch(CONFIG.N8N_URL, {
                     method: 'POST',
@@ -326,42 +424,54 @@
                 const data = await res.json();
                 const item = Array.isArray(data) ? data[0] : data;
 
-                const responseText = item.output || item.script || item.text || "";
-                const audioChunks = item.audios || (item.data ? [item.data] : []);
-
-                if (audioChunks.length > 0) {
-                    playVoice(audioChunks);
+                if (item && (item.audios || item.data)) {
+                    playVoice(item.audios || [item.data]);
+                } else {
+                    DOM.status.textContent = "Connected";
+                    DOM.subtitle.textContent = "I'm listening...";
                 }
             } catch (e) {
-                console.error("AI Error:", e);
-                DOM.status.textContent = "Connection Error";
+                console.error("Webhook Error:", e);
+                DOM.status.textContent = "CORS/Server Error";
+                setTimeout(() => { DOM.status.textContent = "Connected"; }, 2000);
             }
         }
 
         async function playVoice(chunks) {
-            interruptAI(); // Clear any current speech
+            const ctx = getAudioCtx();
+            interruptAI();
             STATE.isSpeaking = true;
+            STATE.aiStartTime = Date.now();
             DOM.status.textContent = "Speaking";
             DOM.subtitle.textContent = "Assistant is responding...";
+            DOM.subtitle.style.color = "var(--accent-color)";
 
             for (let b64 of chunks) {
                 if (!STATE.isSpeaking) break;
                 await new Promise(resolve => {
-                    const audio = new Audio("data:audio/mp3;base64," + (b64.includes(',') ? b64.split(',')[1] : b64));
-                    STATE.audioQueue.push(audio);
-                    audio.onended = () => {
-                        STATE.audioQueue = STATE.audioQueue.filter(a => a !== audio);
+                    try {
+                        const audio = new Audio("data:audio/mp3;base64," + (b64.includes(',') ? b64.split(',')[1] : b64));
+                        const source = ctx.createMediaElementSource(audio);
+                        source.connect(ctx.destination);
+
+                        STATE.audioQueue.push(audio);
+                        audio.onended = () => {
+                            STATE.audioQueue = STATE.audioQueue.filter(a => a !== audio);
+                            resolve();
+                        };
+                        audio.onerror = resolve;
+                        audio.play().catch(resolve);
+                    } catch (e) {
                         resolve();
-                    };
-                    audio.onerror = resolve;
-                    audio.play().catch(resolve);
+                    }
                 });
             }
 
-            if (STATE.isActive) {
+            if (STATE.isActive && STATE.audioQueue.length === 0) {
                 STATE.isSpeaking = false;
                 DOM.status.textContent = "Connected";
                 DOM.subtitle.textContent = "I'm listening...";
+                DOM.subtitle.style.color = "rgba(255,255,255,0.7)";
             }
         }
 
@@ -394,7 +504,15 @@
             STATE.isActive = false;
             stopDialTone();
             interruptAI();
-            if (STATE.recognition) STATE.recognition.stop();
+
+            if (STATE.recognition) {
+                STATE.recognition.onend = null;
+                STATE.recognition.stop();
+            }
+
+            if (STATE.micStream) {
+                STATE.micStream.getTracks().forEach(track => track.stop());
+            }
 
             DOM.container.classList.remove('active-call', 'dialing', 'connected');
             DOM.startBtn.style.display = 'flex';
