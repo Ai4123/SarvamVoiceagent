@@ -47,7 +47,6 @@
             position: relative;
         }
 
-        /* Avatar & Pulsing Effect */
         .avatar-container {
             position: relative;
             margin-top: 20px;
@@ -87,18 +86,10 @@
         }
 
         @keyframes pulse-out {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.5;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) scale(2.5);
-                opacity: 0;
-            }
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
 
-        /* Status & Text */
         .call-status {
             font-size: 1.1rem;
             font-weight: 300;
@@ -121,7 +112,6 @@
             font-weight: 400;
         }
 
-        /* Controls */
         .controls {
             display: flex;
             flex-direction: column;
@@ -145,22 +135,11 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .btn-call {
-            background: var(--success-color);
-        }
+        .btn-call { background: var(--success-color); }
+        .btn-end { background: var(--danger-color); display: none; }
 
-        .btn-end {
-            background: var(--danger-color);
-            display: none;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
-        }
-
-        .btn:active {
-            transform: scale(0.9);
-        }
+        .btn:hover { transform: scale(1.1); }
+        .btn:active { transform: scale(0.9); }
 
         .btn svg {
             width: 35px;
@@ -168,7 +147,6 @@
             fill: currentColor;
         }
 
-        /* transcription for debugging */
         #transcription {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.4);
@@ -177,16 +155,8 @@
             min-height: 1.2em;
         }
 
-        /* Call Screen overlay logic */
-        .call-container.dialing .avatar {
-            transform: scale(0.9);
-            opacity: 0.7;
-        }
-
-        .call-container.connected .avatar {
-            transform: scale(1);
-            opacity: 1;
-        }
+        .call-container.dialing .avatar { transform: scale(0.9); opacity: 0.7; }
+        .call-container.connected .avatar { transform: scale(1); opacity: 1; }
     </style>
 </head>
 
@@ -208,14 +178,12 @@
         <div class="controls">
             <button id="btn-start" class="btn btn-call" title="Start Call">
                 <svg viewBox="0 0 24 24">
-                    <path
-                        d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" />
+                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" />
                 </svg>
             </button>
             <button id="btn-end" class="btn btn-end" title="End Call">
                 <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12,9C10.4,9 8.85,9.25 7.4,9.72V12.82C7.4,13.22 7.17,13.56 6.84,13.72C5.86,14.21 4.97,14.84 4.17,15.57C4,15.75 3.75,15.86 3.5,15.86C3.2,15.86 2.95,15.74 2.77,15.56L0.29,13.08C0.11,12.9 0,12.65 0,12.38C0,12.1 0.11,11.85 0.29,11.67C3.38,8.77 7.49,7 12,7C16.51,7 20.62,8.77 23.71,11.67C23.89,11.85 24,12.1 24,12.38C24,12.65 23.89,12.9 23.71,13.08L21.23,15.56C21.05,15.74 20.8,15.86 20.5,15.86C20.25,15.86 20,15.75 19.82,15.57C19.03,14.84 18.14,14.21 17.16,13.72C16.83,13.56 16.6,13.22 16.6,12.82V9.72C15.15,9.25 13.6,9 12,9Z" />
+                    <path d="M12,9C10.4,9 8.85,9.25 7.4,9.72V12.82C7.4,13.22 7.17,13.56 6.84,13.72C5.86,14.21 4.97,14.84 4.17,15.57C4,15.75 3.75,15.86 3.5,15.86C3.2,15.86 2.95,15.74 2.77,15.56L0.29,13.08C0.11,12.9 0,12.65 0,12.38C0,12.1 0.11,11.85 0.29,11.67C3.38,8.77 7.49,7 12,7C16.51,7 20.62,8.77 23.71,11.67C23.89,11.85 24,12.1 24,12.38C24,12.65 23.89,12.9 23.71,13.08L21.23,15.56C21.05,15.74 20.8,15.86 20.5,15.86C20.25,15.86 20,15.75 19.82,15.57C19.03,14.84 18.14,14.21 17.16,13.72C16.83,13.56 16.6,13.22 16.6,12.82V9.72C15.15,9.25 13.6,9 12,9Z" />
                 </svg>
             </button>
         </div>
@@ -234,10 +202,14 @@
             audioCtx: null,
             analyser: null,
             micStream: null,
-            interruptThreshold: 45, // Increased back to prevent noise sensitivity
+            interruptThreshold: 45,
             aiStartTime: 0,
-            allowBargeInAfter: 1200, // Balanced grace period
-            volumeLevel: 0
+            allowBargeInAfter: 1200,
+            volumeLevel: 0,
+            // NEW: tracks whether STT is currently running
+            sttRunning: false,
+            // NEW: prevents STT from auto-restarting while AI speaks
+            suppressSTT: false
         };
 
         const DOM = {
@@ -245,7 +217,8 @@
             status: document.getElementById('status'),
             subtitle: document.getElementById('subtitle-text'),
             startBtn: document.getElementById('btn-start'),
-            endBtn: document.getElementById('btn-end')
+            endBtn: document.getElementById('btn-end'),
+            transcription: document.getElementById('transcription')
         };
 
         // --- Audio Context & Dial Tone ---
@@ -278,8 +251,32 @@
             dialInterval = setInterval(tone, 4000);
         }
 
-        function stopDialTone() {
-            clearInterval(dialInterval);
+        function stopDialTone() { clearInterval(dialInterval); }
+
+        // --- STT Pause / Resume (KEY FIX) ---
+        function pauseSTT() {
+            // Stop recognition so the mic doesn't pick up speaker audio.
+            // suppressSTT=true prevents onend from restarting it.
+            if (STATE.recognition && STATE.sttRunning) {
+                STATE.suppressSTT = true;
+                try { STATE.recognition.stop(); } catch (e) {}
+                STATE.sttRunning = false;
+                console.log("STT paused (AI speaking)");
+            }
+        }
+
+        function resumeSTT() {
+            // Called after AI finishes speaking.
+            // Add a small delay so any residual speaker audio clears from the mic.
+            STATE.suppressSTT = false;
+            setTimeout(() => {
+                if (STATE.isActive && !STATE.sttRunning && !STATE.isSpeaking) {
+                    try {
+                        STATE.recognition.start();
+                        console.log("STT resumed (AI done)");
+                    } catch (e) {}
+                }
+            }, 400); // 400ms buffer after audio ends
         }
 
         // --- Interruption Logic (Barge-In) ---
@@ -294,16 +291,18 @@
         function interruptAI() {
             if (STATE.isSpeaking || STATE.audioQueue.length > 0) {
                 STATE.audioQueue.forEach(a => {
-                    try { a.pause(); a.src = ""; } catch (e) { }
+                    try { a.pause(); a.src = ""; } catch (e) {}
                 });
                 STATE.audioQueue = [];
                 STATE.isSpeaking = false;
                 DOM.subtitle.textContent = "Listening...";
                 DOM.status.textContent = "Connected";
+                // Resume STT immediately so we can hear the user's barge-in
+                resumeSTT();
             }
         }
 
-        // --- Speech Detection (Volume Analysis) ---
+        // --- Speech Detection (Volume Analysis for barge-in only) ---
         function detectSpeech() {
             if (!STATE.isActive || !STATE.analyser) return;
 
@@ -313,7 +312,6 @@
             const volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
             STATE.volumeLevel = volume;
 
-            // Visual feedback - less sensitive to avoid phantom flashing
             if (volume > 15) {
                 DOM.status.style.color = (volume > STATE.interruptThreshold) ? "#ff5252" : "#00e676";
                 DOM.status.style.opacity = 1;
@@ -322,20 +320,17 @@
                 DOM.status.style.opacity = 0.8;
             }
 
-            // Only barge-in if AI is speaking and volume crosses threshold
+            // Barge-in: volume threshold triggers interrupt even while STT is paused
             if (volume > STATE.interruptThreshold && STATE.isSpeaking) {
                 handleUserInterrupt();
             }
 
-            if (STATE.isActive) {
-                requestAnimationFrame(detectSpeech);
-            }
+            if (STATE.isActive) requestAnimationFrame(detectSpeech);
         }
 
         // --- Speech Recognition ---
         async function startListening() {
             try {
-                // IMPORTANT: Start Recognition BEFORE getUserMedia to avoid hardware lock/conflict
                 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (!SpeechRec) {
                     DOM.status.textContent = "Browser Not Supported";
@@ -349,48 +344,54 @@
 
                 STATE.recognition.onstart = async () => {
                     console.log("STT Active");
+                    STATE.sttRunning = true;
                     DOM.status.textContent = "Connected";
 
-                    // Now that Recognition has fixed the hardware channel, start the Analyser
-                    try {
-                        const micStream = await navigator.mediaDevices.getUserMedia({
-                            audio: { echoCancellation: true, autoGainControl: true }
-                        });
-                        STATE.micStream = micStream;
-                        const ctx = getAudioCtx();
-                        const source = ctx.createMediaStreamSource(micStream);
-                        STATE.analyser = ctx.createAnalyser();
-                        STATE.analyser.fftSize = 256;
-                        source.connect(STATE.analyser);
-                        detectSpeech();
-                    } catch (e) {
-                        console.warn("Analyser blocked, but STT should still work.");
+                    // Set up analyser once (only on first start)
+                    if (!STATE.analyser) {
+                        try {
+                            const micStream = await navigator.mediaDevices.getUserMedia({
+                                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+                            });
+                            STATE.micStream = micStream;
+                            const ctx = getAudioCtx();
+                            const source = ctx.createMediaStreamSource(micStream);
+                            STATE.analyser = ctx.createAnalyser();
+                            STATE.analyser.fftSize = 256;
+                            source.connect(STATE.analyser);
+                            detectSpeech();
+                        } catch (e) {
+                            console.warn("Analyser blocked, barge-in via volume won't work.");
+                        }
                     }
                 };
 
                 STATE.recognition.onerror = (e) => {
                     console.error("STT Error:", e.error);
+                    STATE.sttRunning = false;
                     if (e.error === 'network') DOM.status.textContent = "Network Error";
                     if (e.error === 'not-allowed') DOM.status.textContent = "Mic Denied";
 
-                    if (STATE.isActive && e.error !== 'not-allowed') {
-                        setTimeout(() => { if (STATE.isActive) try { STATE.recognition.start(); } catch (err) { } }, 1000);
+                    if (STATE.isActive && !STATE.suppressSTT && e.error !== 'not-allowed') {
+                        setTimeout(() => {
+                            if (STATE.isActive && !STATE.suppressSTT && !STATE.sttRunning) {
+                                try { STATE.recognition.start(); } catch (err) {}
+                            }
+                        }, 1000);
                     }
                 };
 
                 STATE.recognition.onresult = (event) => {
+                    // If AI is speaking, discard all STT results (safety net — 
+                    // STT should already be paused, but just in case of race conditions)
+                    if (STATE.isSpeaking) return;
+
                     const result = event.results[event.results.length - 1];
                     const text = result[0].transcript;
 
-                    // Show transcription in the MAIN label for the user
                     if (text.trim().length > 0) {
                         DOM.subtitle.textContent = text;
                         DOM.subtitle.style.color = "white";
-                    }
-
-                    // If AI is talking -> interrupt if user spoke more than a tiny bit
-                    if (STATE.isSpeaking && text.length > 5) {
-                        interruptAI();
                     }
 
                     if (result.isFinal && text.trim().length > 1) {
@@ -399,8 +400,10 @@
                 };
 
                 STATE.recognition.onend = () => {
-                    if (STATE.isActive) {
-                        try { STATE.recognition.start(); } catch (e) { }
+                    STATE.sttRunning = false;
+                    // Only restart if we're not suppressing (i.e., AI is not speaking)
+                    if (STATE.isActive && !STATE.suppressSTT) {
+                        try { STATE.recognition.start(); } catch (e) {}
                     }
                 };
 
@@ -439,15 +442,19 @@
 
         async function playVoice(chunks) {
             const ctx = getAudioCtx();
-            interruptAI();
+            interruptAI(); // clears any previous audio
+
             STATE.isSpeaking = true;
             STATE.aiStartTime = Date.now();
             DOM.status.textContent = "Speaking";
             DOM.subtitle.textContent = "Assistant is responding...";
             DOM.subtitle.style.color = "var(--accent-color)";
 
+            // ✅ KEY FIX: Stop STT before playing audio so the mic doesn't hear the speaker
+            pauseSTT();
+
             for (let b64 of chunks) {
-                if (!STATE.isSpeaking) break;
+                if (!STATE.isSpeaking) break; // barge-in may have stopped playback
                 await new Promise(resolve => {
                     try {
                         const audio = new Audio("data:audio/mp3;base64," + (b64.includes(',') ? b64.split(',')[1] : b64));
@@ -467,11 +474,15 @@
                 });
             }
 
+            // All chunks done (or barge-in happened)
             if (STATE.isActive && STATE.audioQueue.length === 0) {
                 STATE.isSpeaking = false;
                 DOM.status.textContent = "Connected";
                 DOM.subtitle.textContent = "I'm listening...";
                 DOM.subtitle.style.color = "rgba(255,255,255,0.7)";
+
+                // ✅ KEY FIX: Resume STT after AI finishes speaking
+                resumeSTT();
             }
         }
 
@@ -486,7 +497,6 @@
 
             startDialTone();
 
-            // Simulate pickup
             setTimeout(() => {
                 if (!STATE.isActive) return;
                 stopDialTone();
@@ -495,13 +505,13 @@
                 DOM.status.textContent = "Connected";
                 DOM.subtitle.textContent = "Listening...";
                 startListening();
-                // Handshake with AI
                 sendToAI("Hello, are you there?");
             }, 3000);
         });
 
         DOM.endBtn.addEventListener('click', () => {
             STATE.isActive = false;
+            STATE.suppressSTT = true; // prevent any restart attempts
             stopDialTone();
             interruptAI();
 
@@ -514,6 +524,10 @@
                 STATE.micStream.getTracks().forEach(track => track.stop());
             }
 
+            STATE.sttRunning = false;
+            STATE.analyser = null;
+            STATE.micStream = null;
+
             DOM.container.classList.remove('active-call', 'dialing', 'connected');
             DOM.startBtn.style.display = 'flex';
             DOM.endBtn.style.display = 'none';
@@ -521,8 +535,6 @@
             DOM.subtitle.textContent = "Ready to start";
             DOM.transcription.textContent = "";
         });
-
     </script>
 </body>
-
 </html>
