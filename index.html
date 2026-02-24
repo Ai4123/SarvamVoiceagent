@@ -86,8 +86,15 @@
         }
 
         @keyframes pulse-out {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(2.5);
+                opacity: 0;
+            }
         }
 
         .call-status {
@@ -135,11 +142,22 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .btn-call { background: var(--success-color); }
-        .btn-end { background: var(--danger-color); display: none; }
+        .btn-call {
+            background: var(--success-color);
+        }
 
-        .btn:hover { transform: scale(1.1); }
-        .btn:active { transform: scale(0.9); }
+        .btn-end {
+            background: var(--danger-color);
+            display: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn:active {
+            transform: scale(0.9);
+        }
 
         .btn svg {
             width: 35px;
@@ -155,8 +173,15 @@
             min-height: 1.2em;
         }
 
-        .call-container.dialing .avatar { transform: scale(0.9); opacity: 0.7; }
-        .call-container.connected .avatar { transform: scale(1); opacity: 1; }
+        .call-container.dialing .avatar {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+
+        .call-container.connected .avatar {
+            transform: scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -170,7 +195,7 @@
 
         <div class="avatar-container" id="avatar-box">
             <div class="pulse"></div>
-            <div class="avatar">🤖</div>
+            <div class="avatar"></div>
             <div class="subtitle" id="subtitle-text">Ready to start</div>
             <div id="transcription"></div>
         </div>
@@ -178,22 +203,50 @@
         <div class="controls">
             <button id="btn-start" class="btn btn-call" title="Start Call">
                 <svg viewBox="0 0 24 24">
-                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" />
+                    <path
+                        d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" />
                 </svg>
             </button>
             <button id="btn-end" class="btn btn-end" title="End Call">
                 <svg viewBox="0 0 24 24">
-                    <path d="M12,9C10.4,9 8.85,9.25 7.4,9.72V12.82C7.4,13.22 7.17,13.56 6.84,13.72C5.86,14.21 4.97,14.84 4.17,15.57C4,15.75 3.75,15.86 3.5,15.86C3.2,15.86 2.95,15.74 2.77,15.56L0.29,13.08C0.11,12.9 0,12.65 0,12.38C0,12.1 0.11,11.85 0.29,11.67C3.38,8.77 7.49,7 12,7C16.51,7 20.62,8.77 23.71,11.67C23.89,11.85 24,12.1 24,12.38C24,12.65 23.89,12.9 23.71,13.08L21.23,15.56C21.05,15.74 20.8,15.86 20.5,15.86C20.25,15.86 20,15.75 19.82,15.57C19.03,14.84 18.14,14.21 17.16,13.72C16.83,13.56 16.6,13.22 16.6,12.82V9.72C15.15,9.25 13.6,9 12,9Z" />
+                    <path
+                        d="M12,9C10.4,9 8.85,9.25 7.4,9.72V12.82C7.4,13.22 7.17,13.56 6.84,13.72C5.86,14.21 4.97,14.84 4.17,15.57C4,15.75 3.75,15.86 3.5,15.86C3.2,15.86 2.95,15.74 2.77,15.56L0.29,13.08C0.11,12.9 0,12.65 0,12.38C0,12.1 0.11,11.85 0.29,11.67C3.38,8.77 7.49,7 12,7C16.51,7 20.62,8.77 23.71,11.67C23.89,11.85 24,12.1 24,12.38C24,12.65 23.89,12.9 23.71,13.08L21.23,15.56C21.05,15.74 20.8,15.86 20.5,15.86C20.25,15.86 20,15.75 19.82,15.57C19.03,14.84 18.14,14.21 17.16,13.72C16.83,13.56 16.6,13.22 16.6,12.82V9.72C15.15,9.25 13.6,9 12,9Z" />
                 </svg>
             </button>
         </div>
     </div>
 
     <script>
+        // ─── CONFIG ──────────────────────────────────────────────
         const CONFIG = {
-            N8N_URL: 'https://n8n.srv962022.hstgr.cloud/webhook/sarvam'
+            N8N_URL: 'https://n8n.srv962022.hstgr.cloud/webhook/voice',
+            SARVAM_KEY: 'sk_2g2f57ke_5Gud6MDIcIPqC36rgbs7ezLd',
+            SARVAM_URL: 'https://api.sarvam.ai/text-to-speech',
+            PREWARM_INTERVAL_MS: 4 * 60 * 1000,
+            SILENCE_THRESHOLD_MS: 350,
+            MIN_WORD_COUNT: 2,
+            MIN_CONFIDENCE: 0.4
         };
 
+        // ─── CACHE & HISTORY ─────────────────────────────────────
+        const responseCache = new Map();
+        function cacheKey(q) { return q.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim(); }
+
+        let conversationHistory = [];
+        const MAX_HISTORY_TURNS = 4;
+
+        // ─── PRE-WARM n8n ────────────────────────────────────────
+        function prewarmN8N() {
+            fetch(CONFIG.N8N_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: '__prewarm__' })
+            }).then(() => console.log(' n8n pre-warmed')).catch(() => { });
+        }
+        prewarmN8N();
+        setInterval(prewarmN8N, CONFIG.PREWARM_INTERVAL_MS);
+
+        // ─── STATE ───────────────────────────────────────────────
         const STATE = {
             isActive: false,
             isSpeaking: false,
@@ -206,12 +259,13 @@
             aiStartTime: 0,
             allowBargeInAfter: 1200,
             volumeLevel: 0,
-            // NEW: tracks whether STT is currently running
             sttRunning: false,
-            // NEW: prevents STT from auto-restarting while AI speaks
-            suppressSTT: false
+            suppressSTT: false,
+            silenceTimer: null,
+            lastInterimText: ''
         };
 
+        // ─── DOM REFS ────────────────────────────────────────────
         const DOM = {
             container: document.getElementById('main-container'),
             status: document.getElementById('status'),
@@ -221,7 +275,7 @@
             transcription: document.getElementById('transcription')
         };
 
-        // --- Audio Context & Dial Tone ---
+        // ─── AUDIO CONTEXT & DIAL TONE ───────────────────────────
         function getAudioCtx() {
             if (!STATE.audioCtx) {
                 STATE.audioCtx = new (window.AudioContext || window.webkitAudioContext)({
@@ -253,37 +307,40 @@
 
         function stopDialTone() { clearInterval(dialInterval); }
 
-        // --- STT Pause / Resume (KEY FIX) ---
+        // ─── STT PAUSE / RESUME (Echo Prevention) ────────────────
         function pauseSTT() {
-            // Stop recognition so the mic doesn't pick up speaker audio.
-            // suppressSTT=true prevents onend from restarting it.
             if (STATE.recognition && STATE.sttRunning) {
                 STATE.suppressSTT = true;
-                try { STATE.recognition.stop(); } catch (e) {}
+                try { STATE.recognition.stop(); } catch (e) { }
                 STATE.sttRunning = false;
-                console.log("STT paused (AI speaking)");
+                console.log(" STT paused (AI speaking)");
             }
         }
 
         function resumeSTT() {
-            // Called after AI finishes speaking.
-            // Add a small delay so any residual speaker audio clears from the mic.
             STATE.suppressSTT = false;
             setTimeout(() => {
                 if (STATE.isActive && !STATE.sttRunning && !STATE.isSpeaking) {
                     try {
                         STATE.recognition.start();
-                        console.log("STT resumed (AI done)");
-                    } catch (e) {}
+                        console.log("🎤 STT resumed");
+                    } catch (e) { }
                 }
-            }, 400); // 400ms buffer after audio ends
+            }, 400);
         }
 
-        // --- Interruption Logic (Barge-In) ---
+        function clearSilenceTimer() {
+            if (STATE.silenceTimer) {
+                clearTimeout(STATE.silenceTimer);
+                STATE.silenceTimer = null;
+            }
+        }
+
+        // ─── INTERRUPTION / BARGE-IN ─────────────────────────────
         function handleUserInterrupt() {
             const now = Date.now();
             if (STATE.isSpeaking && (now - STATE.aiStartTime > STATE.allowBargeInAfter)) {
-                console.log("Barge-in detected!");
+                console.log(" Barge-in detected!");
                 interruptAI();
             }
         }
@@ -291,18 +348,17 @@
         function interruptAI() {
             if (STATE.isSpeaking || STATE.audioQueue.length > 0) {
                 STATE.audioQueue.forEach(a => {
-                    try { a.pause(); a.src = ""; } catch (e) {}
+                    try { a.pause(); a.src = ""; } catch (e) { }
                 });
                 STATE.audioQueue = [];
                 STATE.isSpeaking = false;
                 DOM.subtitle.textContent = "Listening...";
                 DOM.status.textContent = "Connected";
-                // Resume STT immediately so we can hear the user's barge-in
                 resumeSTT();
             }
         }
 
-        // --- Speech Detection (Volume Analysis for barge-in only) ---
+        // ─── VOLUME ANALYSIS (for barge-in only) ─────────────────
         function detectSpeech() {
             if (!STATE.isActive || !STATE.analyser) return;
 
@@ -320,7 +376,6 @@
                 DOM.status.style.opacity = 0.8;
             }
 
-            // Barge-in: volume threshold triggers interrupt even while STT is paused
             if (volume > STATE.interruptThreshold && STATE.isSpeaking) {
                 handleUserInterrupt();
             }
@@ -328,7 +383,21 @@
             if (STATE.isActive) requestAnimationFrame(detectSpeech);
         }
 
-        // --- Speech Recognition ---
+        // ─── NOISE GATE ──────────────────────────────────────────
+        function isNoise(text, confidence) {
+            const words = text.split(/\s+/).filter(w => w.length > 1);
+            if (words.length < CONFIG.MIN_WORD_COUNT) {
+                console.log(' Noise [words]:', text);
+                return true;
+            }
+            if (confidence > 0 && confidence < CONFIG.MIN_CONFIDENCE) {
+                console.log(' Noise [conf]:', confidence.toFixed(2), text);
+                return true;
+            }
+            return false;
+        }
+
+        // ─── SPEECH RECOGNITION ──────────────────────────────────
         async function startListening() {
             try {
                 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -343,11 +412,10 @@
                 STATE.recognition.lang = 'en-IN';
 
                 STATE.recognition.onstart = async () => {
-                    console.log("STT Active");
+                    console.log(" STT Active");
                     STATE.sttRunning = true;
                     DOM.status.textContent = "Connected";
 
-                    // Set up analyser once (only on first start)
                     if (!STATE.analyser) {
                         try {
                             const micStream = await navigator.mediaDevices.getUserMedia({
@@ -375,35 +443,56 @@
                     if (STATE.isActive && !STATE.suppressSTT && e.error !== 'not-allowed') {
                         setTimeout(() => {
                             if (STATE.isActive && !STATE.suppressSTT && !STATE.sttRunning) {
-                                try { STATE.recognition.start(); } catch (err) {}
+                                try { STATE.recognition.start(); } catch (err) { }
                             }
                         }, 1000);
                     }
                 };
 
                 STATE.recognition.onresult = (event) => {
-                    // If AI is speaking, discard all STT results (safety net — 
-                    // STT should already be paused, but just in case of race conditions)
+                    // Discard STT results while AI is speaking (echo prevention)
                     if (STATE.isSpeaking) return;
 
                     const result = event.results[event.results.length - 1];
-                    const text = result[0].transcript;
+                    const text = result[0].transcript.trim();
+                    const confidence = result[0].confidence || 1.0;
 
-                    if (text.trim().length > 0) {
+                    if (text.length > 0) {
                         DOM.subtitle.textContent = text;
                         DOM.subtitle.style.color = "white";
+                        STATE.lastInterimText = text;
                     }
 
-                    if (result.isFinal && text.trim().length > 1) {
-                        sendToAI(text);
+                    // FAST PATH: browser marked it final
+                    if (result.isFinal && text.length > 1) {
+                        clearSilenceTimer();
+                        STATE.lastInterimText = '';
+                        console.log(` Final: "${text}" | conf: ${confidence.toFixed(2)}`);
+                        if (!isNoise(text, confidence)) {
+                            sendToAI(text);
+                        }
+                        return;
+                    }
+
+                    // SILENCE TIMER: fire after pause in speech
+                    clearSilenceTimer();
+                    if (text.length > 1) {
+                        STATE.silenceTimer = setTimeout(() => {
+                            const captured = STATE.lastInterimText;
+                            STATE.lastInterimText = '';
+                            if (captured.length > 1 && !STATE.isSpeaking && !isNoise(captured, 1.0)) {
+                                console.log(' Silence timer fired:', captured);
+                                sendToAI(captured);
+                            }
+                        }, CONFIG.SILENCE_THRESHOLD_MS);
                     }
                 };
 
                 STATE.recognition.onend = () => {
                     STATE.sttRunning = false;
-                    // Only restart if we're not suppressing (i.e., AI is not speaking)
+                    // Only restart if not suppressing (i.e. AI is not speaking)
                     if (STATE.isActive && !STATE.suppressSTT) {
-                        try { STATE.recognition.start(); } catch (e) {}
+                        try { STATE.recognition.start(); } catch (e) { }
                     }
                 };
 
@@ -415,46 +504,133 @@
             }
         }
 
+        // ─── SEND TO AI (with cache + queue + history) ───────────
+        let pendingQuery = null;
+        let isAskingAI = false;
+
         async function sendToAI(text) {
-            if (!STATE.isActive) return;
+            if (!STATE.isActive || !text.trim()) return;
+
+            if (isAskingAI) {
+                console.log(' Queued (busy):', text);
+                pendingQuery = text;
+                return;
+            }
+
+            isAskingAI = true;
+            pendingQuery = null;
+            console.log(' Sending to AI:', text);
+
+            // ⚡ CACHE HIT: same question asked before — play instantly
+            const key = cacheKey(text);
+            const cached = responseCache.get(key);
+            if (cached) {
+                console.log(' Cache hit!', text);
+                DOM.subtitle.textContent = cached.text;
+                playVoice(cached.audios);
+                isAskingAI = false;
+                return;
+            }
+
             DOM.status.textContent = "Thinking...";
             try {
+                // Step 1: Get text from n8n (embed + search + LLM, no TTS)
                 const res = await fetch(CONFIG.N8N_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: text })
+                    body: JSON.stringify({
+                        question: text,
+                        history: conversationHistory.slice(-MAX_HISTORY_TURNS)
+                    })
                 });
                 const data = await res.json();
                 const item = Array.isArray(data) ? data[0] : data;
+                const responseText = item?.text || item?.output || item?.response || '';
+                console.log(' n8n text:', responseText);
 
-                if (item && (item.audios || item.data)) {
-                    playVoice(item.audios || [item.data]);
-                } else {
+                if (!responseText) {
+                    console.warn(' No text in response. Keys:', item ? Object.keys(item) : 'null');
                     DOM.status.textContent = "Connected";
                     DOM.subtitle.textContent = "I'm listening...";
+                    return;
+                }
+
+                // Store in conversation history
+                conversationHistory.push({ q: text, a: responseText });
+                if (conversationHistory.length > MAX_HISTORY_TURNS) conversationHistory.shift();
+                console.log(` History: ${conversationHistory.length} turns`);
+
+                // Step 2: Call Sarvam TTS directly from browser
+                DOM.status.textContent = "Speaking...";
+                DOM.subtitle.textContent = responseText;
+                const ttsRes = await fetch(CONFIG.SARVAM_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${CONFIG.SARVAM_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: responseText,
+                        language_code: 'en-IN',
+                        speaker: 'arya',
+                        format: 'mp3'
+                    })
+                });
+                const ttsData = await ttsRes.json();
+                console.log(' TTS keys:', Object.keys(ttsData));
+
+                if (ttsData.audios && ttsData.audios.length > 0) {
+                    // Cache for instant replay
+                    responseCache.set(key, { text: responseText, audios: ttsData.audios });
+                    if (responseCache.size > 30) responseCache.delete(responseCache.keys().next().value);
+                    console.log(` Cached. Size: ${responseCache.size}`);
+                    playVoice(ttsData.audios);
+                } else {
+                    console.warn(' No audio from Sarvam:', Object.keys(ttsData));
+                    // Fallback: browser speech synthesis
+                    const utt = new SpeechSynthesisUtterance(responseText);
+                    utt.lang = 'en-IN';
+                    utt.onend = () => {
+                        STATE.isSpeaking = false;
+                        resumeSTT();
+                        DOM.status.textContent = "Connected";
+                        DOM.subtitle.textContent = "I'm listening...";
+                    };
+                    STATE.isSpeaking = true;
+                    STATE.aiStartTime = Date.now();
+                    pauseSTT();
+                    window.speechSynthesis.speak(utt);
                 }
             } catch (e) {
-                console.error("Webhook Error:", e);
-                DOM.status.textContent = "CORS/Server Error";
+                console.error("Error:", e);
+                DOM.status.textContent = "Error";
                 setTimeout(() => { DOM.status.textContent = "Connected"; }, 2000);
+            } finally {
+                isAskingAI = false;
+                if (pendingQuery && STATE.isActive && !STATE.isSpeaking) {
+                    const queued = pendingQuery;
+                    pendingQuery = null;
+                    console.log(' Sending queued:', queued);
+                    setTimeout(() => sendToAI(queued), 200);
+                }
             }
         }
 
+        // ─── PLAY AUDIO ──────────────────────────────────────────
         async function playVoice(chunks) {
             const ctx = getAudioCtx();
-            interruptAI(); // clears any previous audio
+            interruptAI(); // clear any previous audio
 
             STATE.isSpeaking = true;
             STATE.aiStartTime = Date.now();
             DOM.status.textContent = "Speaking";
-            DOM.subtitle.textContent = "Assistant is responding...";
             DOM.subtitle.style.color = "var(--accent-color)";
 
-            // ✅ KEY FIX: Stop STT before playing audio so the mic doesn't hear the speaker
+            // KEY: Stop STT before playing so mic doesn't hear speaker
             pauseSTT();
 
             for (let b64 of chunks) {
-                if (!STATE.isSpeaking) break; // barge-in may have stopped playback
+                if (!STATE.isSpeaking) break;
                 await new Promise(resolve => {
                     try {
                         const audio = new Audio("data:audio/mp3;base64," + (b64.includes(',') ? b64.split(',')[1] : b64));
@@ -474,19 +650,19 @@
                 });
             }
 
-            // All chunks done (or barge-in happened)
+            // All chunks played (or barge-in stopped it)
             if (STATE.isActive && STATE.audioQueue.length === 0) {
                 STATE.isSpeaking = false;
                 DOM.status.textContent = "Connected";
                 DOM.subtitle.textContent = "I'm listening...";
                 DOM.subtitle.style.color = "rgba(255,255,255,0.7)";
 
-                // ✅ KEY FIX: Resume STT after AI finishes speaking
+                // KEY: Resume STT after AI finishes
                 resumeSTT();
             }
         }
 
-        // --- Call Lifecycle ---
+        // ─── CALL LIFECYCLE ──────────────────────────────────────
         DOM.startBtn.addEventListener('click', () => {
             getAudioCtx();
             STATE.isActive = true;
@@ -505,16 +681,39 @@
                 DOM.status.textContent = "Connected";
                 DOM.subtitle.textContent = "Listening...";
                 startListening();
-                sendToAI("Hello, are you there?");
+
+                // Greet via Sarvam TTS directly — bypass n8n KB search
+                const greetText = "Hello! I'm Sensi, your voice assistant. How can I help you today?";
+                DOM.subtitle.textContent = greetText;
+                STATE.isSpeaking = true;
+                STATE.aiStartTime = Date.now();
+                pauseSTT();
+                fetch(CONFIG.SARVAM_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${CONFIG.SARVAM_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: greetText, language_code: 'en-IN', speaker: 'arya', format: 'mp3' })
+                }).then(r => r.json()).then(d => {
+                    if (d.audios && d.audios.length > 0) {
+                        playVoice(d.audios);
+                    } else {
+                        const utt = new SpeechSynthesisUtterance(greetText);
+                        utt.lang = 'en-IN';
+                        utt.onend = () => { STATE.isSpeaking = false; resumeSTT(); DOM.subtitle.textContent = "I'm listening..."; };
+                        window.speechSynthesis.speak(utt);
+                    }
+                }).catch(() => { STATE.isSpeaking = false; resumeSTT(); });
             }, 3000);
         });
 
-        
         DOM.endBtn.addEventListener('click', () => {
             STATE.isActive = false;
-            STATE.suppressSTT = true; // prevent any restart attempts
+            STATE.suppressSTT = true;
             stopDialTone();
             interruptAI();
+            clearSilenceTimer();
 
             if (STATE.recognition) {
                 STATE.recognition.onend = null;
@@ -535,7 +734,11 @@
             DOM.status.textContent = "Standby";
             DOM.subtitle.textContent = "Ready to start";
             DOM.transcription.textContent = "";
+            conversationHistory = [];
+            responseCache.clear();
+            console.log(' Session cleared');
         });
     </script>
 </body>
+
 </html>
